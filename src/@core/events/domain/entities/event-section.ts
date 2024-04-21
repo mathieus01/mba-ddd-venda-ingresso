@@ -1,5 +1,10 @@
 import { Entity } from '../../../common/domain/entity';
-import Uuid from '../../../common/domain/value-objects/uuid.vs';
+import {
+  AnyCollection,
+  ICollection,
+  MyCollectionFactory,
+} from '../../../common/domain/my-collection';
+import Uuid from '../../../common/domain/value-objects/uuid.vo';
 import { EventSpot } from './event-spot';
 
 export class EventSectionId extends Uuid {}
@@ -19,7 +24,6 @@ export type EventSectionConstructorProps = {
   total_spots: number;
   total_spots_reserved: number;
   price: number;
-  spots?: Set<EventSpot>;
 };
 
 export class EventSection extends Entity {
@@ -30,20 +34,21 @@ export class EventSection extends Entity {
   total_spots: number;
   total_spots_reserved: number;
   price: number;
-  spots?: Set<EventSpot>;
+  private _spots: ICollection<EventSpot>;
 
   constructor(props: EventSectionConstructorProps) {
     super();
-    typeof props.id === 'string'
-      ? new EventSectionId(props.id)
-      : props.id ?? new EventSectionId();
+    this.id =
+      typeof props.id === 'string'
+        ? new EventSectionId(props.id)
+        : props.id ?? new EventSectionId();
     this.name = props.name;
     this.description = props.description;
     this.is_published = props.is_published;
     this.total_spots = props.total_spots;
     this.total_spots_reserved = props.total_spots_reserved;
     this.price = props.price;
-    this.spots = props.spots ?? new Set<EventSpot>();
+    this._spots = MyCollectionFactory.create<EventSpot>(this);
   }
 
   static create(command: EventSectionCreateCommand) {
@@ -78,7 +83,7 @@ export class EventSection extends Entity {
 
   publishAll() {
     this.publish();
-    this.spots.forEach((spots) => spots.publish());
+    this.spots.forEach((spot) => spot.publish());
   }
 
   publish() {
@@ -87,6 +92,14 @@ export class EventSection extends Entity {
 
   unPublish() {
     this.is_published = false;
+  }
+
+  get spots(): ICollection<EventSpot> {
+    return this._spots as ICollection<EventSpot>;
+  }
+
+  set spots(spots: AnyCollection<EventSpot>) {
+    this._spots = MyCollectionFactory.createFrom<EventSpot>(spots);
   }
 
   toJSON() {

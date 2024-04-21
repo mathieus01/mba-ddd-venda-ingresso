@@ -1,5 +1,5 @@
 import { Entity } from '../../../common/domain/entity';
-import Uuid from '../../../common/domain/value-objects/uuid.vs';
+import Uuid from '../../../common/domain/value-objects/uuid.vo';
 
 export class EventSpotId extends Uuid {}
 
@@ -45,6 +45,10 @@ export class EventSpot extends Entity {
 
   unPublish() {
     this.is_published = false;
+  }
+
+  markAsReserved() {
+    this.is_reserved = true;
   }
 
   toJSON() {

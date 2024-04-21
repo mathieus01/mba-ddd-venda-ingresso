@@ -1,4 +1,4 @@
-import Uuid from '../../../common/domain/value-objects/uuid.vs';
+import Uuid from '../../../common/domain/value-objects/uuid.vo';
 import { AggregateRoot } from '../../../common/domain/aggregate-root';
 import Cpf from '../../../common/domain/value-objects/cpf.vo';
 
@@ -30,6 +30,10 @@ export class Customer extends AggregateRoot {
       name: command.name,
       cpf: new Cpf(command.cpf),
     });
+  }
+
+  changeName(name: string) {
+    this.name = name;
   }
 
   toJSON() {

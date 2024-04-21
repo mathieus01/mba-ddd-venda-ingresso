@@ -16,12 +16,25 @@ test('deve criar um evento', () => {
     price: 1000,
   });
 
-  expect(event.sections.size).toBe(1);
+  expect(event.sections.count()).toBe(1);
   expect(event.total_spots).toBe(100);
 
   const [section] = event.sections;
 
-  expect(section.spots.size).toBe(100);
+  expect(section.spots.count()).toBe(100);
+
+  // const spot = EventSpot.create();
+
+  // section.spots.add(spot);
+
+  // console.dir(event.toJSON(), { depth: 10 });
+
+  // não é valido
+  // customer = new Customer({
+  //   id: '123', new CustomerId() || new CustomerId('')
+  //   name: 'João',
+  //   cpf: '99346413050',
+  // });
 });
 
 test('deve publicar todos os itens do evento', () => {
@@ -50,7 +63,7 @@ test('deve publicar todos os itens do evento', () => {
 
   expect(event.is_published).toBe(true);
 
-  const [section1, section2] = event.sections.values();
+  const [section1, section2] = event.sections.getItems();
   expect(section1.is_published).toBe(true);
   expect(section2.is_published).toBe(true);
 
