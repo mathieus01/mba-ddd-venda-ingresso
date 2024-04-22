@@ -11,7 +11,7 @@ export class EventService {
     private ouw: IUnitOfWork,
   ) {}
 
-  list() {
+  findEvents() {
     return this.eventRepository.findAll();
   }
 
@@ -145,7 +145,7 @@ export class EventService {
 
     await this.ouw.commit();
 
-    return section.findSpot(input.spot_id);
+    return section.findSpot(spotId);
   }
 
   async publishAll(input: { event_id: string }) {

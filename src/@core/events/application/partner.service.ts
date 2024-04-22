@@ -1,11 +1,11 @@
-import { UnitOfWork } from '@mikro-orm/core';
 import { IPartnerRepository } from '../domain/repositories/partner-repository.interface';
 import { Partner } from '../domain/entities/partner.entity';
+import { IUnitOfWork } from '../../common/application/unit-of-work.interface';
 
 export class PartnerService {
   constructor(
     private partnerRepository: IPartnerRepository,
-    private uow: UnitOfWork,
+    private uow: IUnitOfWork,
   ) {}
 
   list() {
