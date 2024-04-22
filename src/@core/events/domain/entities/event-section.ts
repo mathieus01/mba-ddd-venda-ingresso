@@ -5,7 +5,7 @@ import {
   MyCollectionFactory,
 } from '../../../common/domain/my-collection';
 import Uuid from '../../../common/domain/value-objects/uuid.vo';
-import { EventSpot } from './event-spot';
+import { EventSpot, EventSpotId } from './event-spot';
 
 export class EventSectionId extends Uuid {}
 
@@ -100,6 +100,51 @@ export class EventSection extends Entity {
 
   set spots(spots: AnyCollection<EventSpot>) {
     this._spots = MyCollectionFactory.createFrom<EventSpot>(spots);
+  }
+
+  findSpot(spot_id: string | EventSpotId) {
+    const spotId =
+      typeof spot_id === 'string'
+        ? new EventSectionId(spot_id)
+        : spot_id ?? new EventSectionId();
+
+    const spot = this.spots.find((spot) => spot.id.equals(spotId));
+
+    if (!spot) {
+      throw new Error('EventSpot not found');
+    }
+
+    return spot;
+  }
+
+  changeLocation(command: {
+    section_id: EventSectionId;
+    spot_id: EventSpotId;
+    location: string;
+  }) {
+    const spot = this.findSpot(command.spot_id);
+
+    spot.changeLocation(command.location);
+  }
+
+  allowReserveSpot(spot_id) {
+    if (!this.is_published) return false;
+
+    const spot = this.findSpot(spot_id);
+
+    if (spot.is_reserved) return false;
+
+    if (!spot.is_published) return false;
+
+    return true;
+  }
+
+  markSpotAsReserved(spot_id: EventSpotId) {
+    const spot = this.findSpot(spot_id);
+
+    if (spot.is_reserved) throw new Error('Spot already reserved');
+
+    spot.markAsReserved();
   }
 
   toJSON() {
